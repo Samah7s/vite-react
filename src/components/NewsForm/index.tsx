@@ -26,14 +26,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     if (isEditing && newsItemToEdit) {
       setTitle(newsItemToEdit.title);
       setContent(newsItemToEdit.content);
-      console.log(
-        "NewsForm useEffect: Populating form for editing item ID:",
-        newsItemToEdit.id
-      );
     } else {
       setTitle("");
       setContent("");
-      console.log("NewsForm useEffect: Resetting form for adding news.");
     }
   }, [newsItemToEdit, isEditing]);
 
@@ -73,17 +68,11 @@ export const NewsForm: React.FC<NewsFormProps> = ({
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>
       <h2>{formTitle}</h2>
-      {isDisabled && !currentUser && (
-        <p style={{ color: "var(--danger-color)" }}>
-          Please log in to add or edit news.
-        </p>
-      )}
+      {isDisabled && !currentUser && <p>Please log in to add or edit news.</p>}
       {isDisabled &&
         newsItemToEdit &&
         newsItemToEdit.authorId !== currentUser && (
-          <p style={{ color: "var(--danger-color)" }}>
-            You cannot edit this item.
-          </p>
+          <p>You cannot edit this item.</p>
         )}
 
       <div className={styles.formGroup}>
