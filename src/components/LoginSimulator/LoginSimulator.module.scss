@@ -1,0 +1,31 @@
+.loginContainer {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: var(--card-background-color);
+
+  p {
+    margin-bottom: 0.5rem;
+    color: var(--text-color-secondary);
+  }
+
+  .currentUser {
+    font-weight: bold;
+    color: var(--accent-color);
+  }
+
+  button {
+    margin: 0.2rem 0.5rem;
+  }
+  .loginButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    button {
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      width: 100%;
+      margin: 0;
+    }
+  }
+}

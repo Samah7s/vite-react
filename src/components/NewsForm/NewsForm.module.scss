@@ -1,0 +1,64 @@
+.formContainer {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--card-background-color);
+  text-align: left;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+  }
+
+  .formGroup {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-color-secondary);
+      font-weight: 500;
+    }
+
+    input,
+    textarea {
+      width: 100%; 
+    }
+  }
+
+  .buttonGroup {
+    text-align: right;
+    margin-top: 1rem;
+
+    button[type="submit"] {
+      background-color: var(--accent-color);
+      color: white;
+      &:hover {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+      }
+    }
+    button[type="button"] {
+      background-color: transparent;
+      border: 1px solid var(--text-color-secondary);
+      color: var(--text-color-secondary);
+      &:hover {
+        border-color: var(--text-color);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+    .buttonGroup {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      button {
+        width: 100%;
+        // margin-top: 0.5rem;
+      }
+    }
+  }
+}

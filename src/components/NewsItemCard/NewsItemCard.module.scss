@@ -1,0 +1,88 @@
+.card {
+  background-color: var(--card-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+
+  .content {
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text-color-secondary);
+  }
+
+  .meta {
+    font-size: 0.85em;
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+    margin-bottom: 1rem;
+
+    span {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .author {
+      font-style: italic;
+    }
+  }
+
+  .actions {
+    text-align: right;
+    button {
+      margin-left: 0.5rem;
+      padding: 0.4em 0.8em;
+      font-size: 0.9em;
+    }
+
+    .editButton {
+      border-color: var(--edit-color);
+      color: var(--edit-color);
+      transition: color 0.3s ease, border-color 0.3s ease;
+      &:hover {
+        border-color: #14a72a;
+        color: #14a72a;
+      }
+    }
+    .deleteButton {
+      border-color: var(--danger-color);
+      color: var(--danger-color);
+      transition: color 0.3s ease, border-color 0.3s ease;
+      &:hover {
+        border-color: #aa1515;
+        color: #aa1515;
+      }
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 1rem;
+    h3 {
+      font-size: 1.1rem;
+    }
+    .content {
+      font-size: 0.95rem;
+    }
+    .meta {
+      font-size: 0.8rem;
+    }
+    .actions {
+      button {
+        padding: 0.3em 0.6em;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}

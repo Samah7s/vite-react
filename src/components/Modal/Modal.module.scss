@@ -1,0 +1,73 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.modal {
+  background-color: var(--card-background-color);
+  padding: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  min-width: 600px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+  }
+
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    padding: 0.2rem;
+    line-height: 1;
+
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+
+  .actionButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    button {
+      width: 100%;
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .modal {
+    padding: 1.5rem;
+    min-width: 280px;
+  }
+}
