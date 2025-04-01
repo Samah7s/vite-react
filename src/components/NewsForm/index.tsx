@@ -19,22 +19,26 @@ export const NewsForm: React.FC<NewsFormProps> = ({
   const addNews = useNewsStore((state) => state.addNews);
   const editNews = useNewsStore((state) => state.editNews);
   const currentUser = useNewsStore((state) => state.currentUser);
+  const isEditing = Boolean(newsItemToEdit);
   const formTitle = newsItemToEdit ? "Editing" : "Adding";
 
   useEffect(() => {
-    if (newsItemToEdit) {
-      if (currentUser === newsItemToEdit.authorId) {
-        setTitle(newsItemToEdit.title);
-        setContent(newsItemToEdit.content);
-      } else {
-        console.warn("Attempted to edit an item not owned by current user.");
-        onFinishEditing();
-      }
+    if (isEditing && newsItemToEdit) {
+      setTitle(newsItemToEdit.title);
+      setContent(newsItemToEdit.content);
+      console.log(
+        "NewsForm useEffect: Populating form for editing item ID:",
+        newsItemToEdit.id
+      );
     } else {
       setTitle("");
       setContent("");
+      console.log("NewsForm useEffect: Resetting form for adding news.");
     }
-  }, [newsItemToEdit, currentUser, onFinishEditing]);
+  }, [newsItemToEdit, isEditing]);
+
+  const isDisabled =
+    !currentUser || (isEditing && newsItemToEdit?.authorId !== currentUser);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,30 +50,25 @@ export const NewsForm: React.FC<NewsFormProps> = ({
       alert("Please log in to submit news.");
       return;
     }
+    if (isEditing && newsItemToEdit?.authorId !== currentUser) {
+      alert("You cannot save changes to another user's news item.");
+      return;
+    }
 
-    if (newsItemToEdit) {
+    if (isEditing && newsItemToEdit) {
       editNews(newsItemToEdit.id, title, content);
       onFinishEditing();
-      onClose();
     } else {
       addNews(title, content);
-      setTitle("");
-      setContent("");
-      onClose();
     }
   };
 
   const handleCancel = () => {
-    setTitle("");
-    setContent("");
-    onFinishEditing();
     onClose();
+    if (isEditing) {
+      onFinishEditing();
+    }
   };
-
-  const isDisabled =
-    !currentUser ||
-    (newsItemToEdit && newsItemToEdit.authorId !== currentUser) ||
-    undefined;
 
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit}>

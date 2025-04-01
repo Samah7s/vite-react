@@ -33,16 +33,21 @@ const generateMockNews = (count: number = 3): NewsItem[] => {
   return news;
 };
 
+export type ModalType = "login" | "news" | null;
+
 interface NewsState {
   news: NewsItem[];
   currentUser: User;
   isLoading: boolean;
+  activeModal: ModalType;
   setCurrentUser: (userId: User) => void;
   addNews: (title: string, content: string) => void;
   editNews: (id: string, title: string, content: string) => void;
   deleteNews: (id: string) => void;
   cutAndSortNews: (items: NewsItem[]) => NewsItem[];
   simulateFetchNews: () => Promise<void>;
+  openModal: (type: Exclude<ModalType, null>) => void;
+  closeModal: () => void;
   _hydrated: boolean;
   setHasHydrated: (state: boolean) => void;
 }
@@ -54,6 +59,7 @@ export const useNewsStore = create<NewsState>()(
       currentUser: null,
       isLoading: false,
       _hydrated: false,
+      activeModal: null,
       setHasHydrated: (state) => {
         set({
           _hydrated: state,
@@ -83,6 +89,7 @@ export const useNewsStore = create<NewsState>()(
         set((state) => ({
           news: state.cutAndSortNews([newItem, ...state.news]),
         }));
+        get().closeModal();
       },
 
       editNews: (id, title, content) => {
@@ -101,6 +108,10 @@ export const useNewsStore = create<NewsState>()(
           );
           return { news: state.cutAndSortNews(updatedNews) };
         });
+        const newsToEdit = get().news.find((item) => item.id === id);
+        if (newsToEdit?.authorId === currentUser) {
+          get().closeModal();
+        }
       },
 
       deleteNews: (id) => {
@@ -142,6 +153,8 @@ export const useNewsStore = create<NewsState>()(
         set({ news: finalNews, isLoading: false });
         console.log("Simulation completed. News updated and pruned.");
       },
+      openModal: (type) => set({ activeModal: type }),
+      closeModal: () => set({ activeModal: null }),
     }),
     {
       name: "news-storage",

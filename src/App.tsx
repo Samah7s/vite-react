@@ -4,18 +4,19 @@ import { NewsList } from "./components/NewsList";
 import { NewsForm } from "./components/NewsForm";
 import { NewsItem } from "./types";
 import styles from "./App.module.scss";
-// import { LoginModal } from "./components/LoginModal";
 import { Modal } from "./components/Modal";
 import { LoginSimulator } from "./components/LoginSimulator";
 
 function App() {
   const [editingNewsItem, setEditingNewsItem] = useState<NewsItem | null>(null);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isNewsModalOpen, setNewsModalOpen] = useState(false);
+
   const simulateFetchNews = useNewsStore((state) => state.simulateFetchNews);
   const isHydrated = useNewsStore((state) => state._hydrated);
   const currentUser = useNewsStore((state) => state.currentUser);
   const setCurrentUser = useNewsStore((state) => state.setCurrentUser);
+  const activeModal = useNewsStore((state) => state.activeModal);
+  const openModal = useNewsStore((state) => state.openModal);
+  const closeModal = useNewsStore((state) => state.closeModal);
   const didSimulateFetch = useRef(false);
 
   useEffect(() => {
@@ -35,30 +36,70 @@ function App() {
   }, [isHydrated, simulateFetchNews]);
 
   useEffect(() => {
-    if (!currentUser && editingNewsItem) {
-      setEditingNewsItem(null);
+    if (!currentUser) {
+      console.log("Effect [currentUser]: User logged out.");
+
+      if (activeModal === "news") {
+        console.log("Effect [currentUser]: Closing news modal due to logout.");
+        closeModal();
+      }
+
     }
-  }, [currentUser, editingNewsItem]);
+  }, [currentUser, activeModal, closeModal]); 
 
   const handleEditItem = (item: NewsItem) => {
     if (currentUser === item.authorId) {
-      setEditingNewsItem(item);
-      setNewsModalOpen(true);
+      console.log("handleEditItem: Setting item and opening modal", item.id);
+      setEditingNewsItem(item); 
+      openModal("news"); 
     } else {
       alert("You cannot edit another user's news item.");
     }
   };
 
   const handleFinishEditing = () => {
+    console.log("handleFinishEditing called (Resetting item state)");
     setEditingNewsItem(null);
-    setNewsModalOpen(false);
+  };
+
+  const handleAddNewsClick = () => {
+    console.log(
+      "handleAddNewsClick called (Resetting item state if any, opening modal)"
+    );
+    setEditingNewsItem(null); 
+    openModal("news");
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
-    setEditingNewsItem(null);
+    console.log("handleLogout called");
+    setCurrentUser(null); 
   };
 
+  const handleCloseModal = () => {
+    const modalTypeBeingClosed = activeModal;
+    console.log(
+      "handleCloseModal called for modal type:",
+      modalTypeBeingClosed
+    );
+
+    closeModal(); 
+
+    if (modalTypeBeingClosed === "news") {
+      console.log(
+        "handleCloseModal: Resetting edit item because news modal closed."
+      );
+      setEditingNewsItem(null);
+    }
+  };
+
+  console.log(
+    "App RENDER, currentUser:",
+    currentUser,
+    "activeModal:",
+    activeModal,
+    "editingNewsItem:",
+    editingNewsItem
+  );
   return (
     <div className={styles.appContainer}>
       <header className={styles.appHeader}>
@@ -69,45 +110,41 @@ function App() {
               <span className="userInfo">
                 Logged in as: {currentUser.split("-")[1]}
               </span>
-              <button onClick={() => setNewsModalOpen(true)}>Add News</button>
+              <button onClick={handleAddNewsClick}>Add News</button>
               <button onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <>
-              <button onClick={() => setIsLoginModalOpen(true)}>Login</button>
+              <button onClick={() => openModal("login")}>Login</button>
             </>
           )}
         </div>
       </header>
-      {/* <NewsForm
-        newsItemToEdit={editingNewsItem}
-        onFinishEditing={handleFinishEditing}
-      /> */}
-
       <h2>News Feed</h2>
       <NewsList onEditItem={handleEditItem} />
-      {/* <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-      /> */}
-      <Modal
-        onClose={() => setIsLoginModalOpen(false)}
-        isOpen={isLoginModalOpen}
-        children={<LoginSimulator onClose={()=>setIsLoginModalOpen(false)} />}
-        modalType={"Login"}
-      />
-      <Modal
-        onClose={() => setNewsModalOpen(false)}
-        isOpen={isNewsModalOpen}
-        children={
+      {activeModal === "login" && ( 
+        <Modal
+          onClose={handleCloseModal}
+          isOpen={true} 
+          modalType={"Login"}
+        >
+          <LoginSimulator onClose={handleCloseModal} />
+        </Modal>
+      )}
+
+      {activeModal === "news" && ( 
+        <Modal
+          onClose={handleCloseModal}
+          isOpen={true} 
+          modalType={editingNewsItem ? "Edit News" : "Add News"}
+        >
           <NewsForm
-            onClose={() => setNewsModalOpen(false)}
+            onClose={handleCloseModal}
             newsItemToEdit={editingNewsItem}
             onFinishEditing={handleFinishEditing}
           />
-        }
-        modalType={"Add News"}
-      />
+        </Modal>
+      )}
     </div>
   );
 }
